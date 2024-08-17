@@ -1,0 +1,38 @@
+---
+# tasks file for nginx
+
+- name: install nginx on Ubuntu
+  apt:
+    name: nginx
+    state: present
+  when: ansible_facts['distribution'] == 'Ubuntu'
+  tags: install_nginx_ubuntu
+
+- name: install nginx on CentOS
+  yum:
+    name: nginx
+    state: present
+  when: ansible_facts['distribution'] == 'CentOS'
+  tags: install_nginx_centos
+
+- name: start nginx server
+  service:
+    name: nginx
+    state: started
+    enabled: yes
+  tags: start_nginx
+
+- name: change nginx port number for CentOS
+  template:
+    src: ./nginx.conf.j2
+    dest: /etc/nginx/nginx.conf
+    owner: root
+    group: root
+    mode: '0644'
+  when: ansible_facts['distribution'] == 'CentOS'
+  notify:
+    - check_nginx_conf
+    - display_check_result
+    - restart_nginx
+  tags: nginx_port_centos
+  

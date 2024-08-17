@@ -1,0 +1,5 @@
+- name: Configure Nginx Webserver and PostgreSQL Database
+  hosts: all
+  roles:
+    - nginx
+    - postgresql

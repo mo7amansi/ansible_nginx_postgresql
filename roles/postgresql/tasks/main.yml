@@ -1,0 +1,39 @@
+---
+# tasks file for postgresql
+
+- name: install postgresql on Ubuntu
+  apt:
+    name: postgresql
+    state: present
+  when: ansible_facts['distribution'] == 'Ubuntu'
+  tags: install_postgresql_ubuntu
+
+- name: start postgresql server on Ubuntu
+  service:
+    name: postgresql
+    state: started
+    enabled: yes
+  when: ansible_facts['distribution'] == 'Ubuntu'
+  tags: start_postgresql_ubuntu
+
+- name: install postgresql on CentOS
+  yum:
+    name: postgresql-server
+    state: present
+  when: ansible_facts['distribution'] == 'CentOS'
+  tags: install_postgresql_centos
+
+- name: initiallize postgresql on CentOS
+  shell: |
+    if [ ! -f /var/lib/pgsql/data/PG_VERSION ]; then
+      postgresql-setup initdb;
+    fi
+  when: ansible_facts['distribution'] == 'CentOS'
+  tags: initialize_postgresql
+
+- name: start postgresql server on CentOS
+  service:
+    name: postgresql.service
+    state: started
+    enabled: yes
+  tags: start_postgresql_centos

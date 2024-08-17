@@ -1,0 +1,19 @@
+---
+# handlers file for nginx
+
+- name: check_nginx_conf
+  shell: nginx -t
+  register: check_nginx_conf
+  tags: check_nginx_conf
+
+- name: display_check_result
+  debug:
+    msg: "Nginx configuration check: {{ check_nginx_conf.stdout }} {{ check_nginx_conf.stderr }}"
+  tags: display_check_result
+
+- name: restart_nginx
+  service: 
+    name: nginx
+    state: restarted
+  when: check_nginx_conf.rc == 0
+  tags: restart_nginx
